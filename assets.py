@@ -34,10 +34,10 @@ class AssetsManager:
         image.paste(bottom_image, (32, 0))
         return Texture(image)
 
+
 class Assets:
     # models
     block = AssetsManager.get_model('block')
-    block_45 = AssetsManager.get_model('block_45')
     dropping = AssetsManager.get_model('dropping')
 
     # item texture
@@ -59,10 +59,11 @@ class Assets:
     tnt = AssetsManager.block_texture_3('tnt')
 
     piston = AssetsManager.block_texture_3('piston')
-
-
-
-
+    stick_piston = AssetsManager.block_texture_48x16(
+        'piston_top_sticky.png',
+        'piston_side.png',
+        'piston_bottom.png'
+    )
 
 # image = Image.new('RGBA', (48, 16), color=(0, 0, 0, 0))
 # image.save('block.png')

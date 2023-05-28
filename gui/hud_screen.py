@@ -127,21 +127,26 @@ class HotbarUI:
         ))
 
         self.set_slot(6, SlotEntity(
-            texture=Assets.tnt,
+            texture=Assets.stick_piston,
             model=Assets.block,
             entity_type=SlotEntityType.BLOCK,
+            identifier='stick_piston',
         ))
 
         self.set_slot(7, SlotEntity(
-            texture=Assets.grass,
+            texture=Assets.tnt,
             model=Assets.block,
-            entity_type=SlotEntityType.BLOCK
+            entity_type=SlotEntityType.BLOCK,
+            identifier='tnt',
         ))
+
+
 
         self.set_slot(8, SlotEntity(
             texture=Assets.sandstone_carved,
             model=Assets.block,
-            entity_type=SlotEntityType.BLOCK
+            entity_type=SlotEntityType.BLOCK,
+            identifier='sandstone_carved',
         ))
 
         self.update_player_carried()

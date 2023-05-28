@@ -1,7 +1,6 @@
 from ursina import Ursina, held_keys, mouse
 
-from assets import AssetsManager, Assets
-from block.block import Block
+from block.block import Level, Block
 from block.enchanting_table import EnchantingTable
 from block.endframe import EndFrame
 from block.fence_door import FenceDoor
@@ -11,22 +10,22 @@ from gui.hud_screen import HotbarUI
 
 app = Ursina()
 
+Block.init_blocks()
+
 generate_grass_ground = True
-
+#
 if generate_grass_ground:
-    for x in range(-5, 10):
-        for z in range(10):
-            block = Block(
-                model=AssetsManager.get_model('block'),
-                texture=Assets.grass,
-                position=(x, 1, z)
-            )
-            block.on_remove = lambda: ()
+    for x in range(-4, 4):
+        for z in range(8):
+            Level.set_block('grass', (x, 1, z))
 
-PistonBlock(position=(2, 2, 2))
-EndFrame(position=(3, 2, 2))
-EnchantingTable(position=(4, 2, 2))
-FenceDoor(position=(5, 2, 2))
+# Level.set_block('grass', (0, 1, 0))
+
+#
+# PistonBlock(position=(2, 2, 2))
+# EndFrame(position=(3, 2, 2))
+# EnchantingTable(position=(4, 2, 2))
+# FenceDoor(position=(5, 2, 2))
 
 player = client.player
 player.gravity = 0
