@@ -2,7 +2,7 @@ from ursina import Entity, Vec3, camera
 
 from assets import Assets
 from data.option import Option
-from gui.hud_screen import SlotEntityType, SlotEntity
+from gui.hud_screen import SlotEntityType, HotbarSlotEntity
 
 # player hand-carried model:
 # - empty (hand model)
@@ -60,7 +60,7 @@ class CarriedItem(Entity):
         self.type = entity_type
         self.update_transform()
 
-    def set_entity(self, entity: SlotEntity):
+    def set_entity(self, entity: HotbarSlotEntity):
         self.model = entity.model.name
         self.texture = entity.texture
         self.entity_type = entity.entity_type

@@ -40,8 +40,9 @@ class AssetsManager:
 # JSON
 class Assets:
     # models
-    block = AssetsManager.get_model('block')
     dropping = AssetsManager.get_model('dropping')
+    isotropic = AssetsManager.get_model('isotropic')
+    block = AssetsManager.get_model('block')
 
     # item texture
     apple = AssetsManager.get_items_image('apple')

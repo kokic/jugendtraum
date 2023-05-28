@@ -53,22 +53,24 @@ class SlotEntityType(Enum):
             return Vec3(-15, 45, 15)
 
 
-selector_off_unit = 0.0444 * Option.ui_scale
+selector_off_unit = 0.044 * Option.ui_scale
 selector_min_x = selector_off_unit * -4
 selector_max_x = selector_off_unit * 3
 
 # 30
 
-hotbar_position = Vec3(0, -2.05, 4)
+# hotbar_position = Vec3(0, -0.456)
+hotbar_position_y = -0.456
 
 
-class SlotEntity(UIElement):
+class HotbarSlotEntity(UIElement):
     def __init__(self, **kwargs):
         super().__init__(
+            use_ratio_scale=False,
             texture=Assets.apple,
             model='dropping',
             x=selector_min_x,
-            y=-0.456,
+            y=hotbar_position_y,
             scale=SlotEntityType.ITEM.get_scale() * Option.ui_scale,
         )
 
@@ -88,7 +90,7 @@ class SlotEntity(UIElement):
         self.update_transform()
 
     def update_transform(self):
-        self.scale = Option.ui_scale * self.type.get_scale()
+        self.scale = self.type.get_scale() * Option.ui_scale
         self.rotation = self.type.get_rotation()
 
 
@@ -102,47 +104,45 @@ class HotbarUI:
 
         self.hotbar = UIElement(
             texture=hotbar_texture,
-            y=-0.456,
-            scale=0.0486 * Option.ui_scale,
+            y=hotbar_position_y,
+            scale=0.4 * Option.ui_scale,
         )
 
         self.selector = UIElement(
             texture=hotbar_selector_texture,
             x=selector_min_x,
-            y=-0.456,
+            y=hotbar_position_y,
             scale=0.054 * Option.ui_scale
         )
 
         for n in range(9):
-            self.slots.append(SlotEntity(
-                texture=item_textures[n],
+            self.slots.append(HotbarSlotEntity(
+                texture=item_textures[n % len(item_textures)],
                 x=selector_min_x + n * selector_off_unit,
             ))
 
-        self.set_slot(5, SlotEntity(
+        self.set_slot(5, HotbarSlotEntity(
             texture=Assets.piston,
             model=Assets.block,
             entity_type=SlotEntityType.BLOCK,
             identifier='piston',
         ))
 
-        self.set_slot(6, SlotEntity(
+        self.set_slot(6, HotbarSlotEntity(
             texture=Assets.stick_piston,
             model=Assets.block,
             entity_type=SlotEntityType.BLOCK,
             identifier='stick_piston',
         ))
 
-        self.set_slot(7, SlotEntity(
+        self.set_slot(7, HotbarSlotEntity(
             texture=Assets.tnt,
             model=Assets.block,
             entity_type=SlotEntityType.BLOCK,
             identifier='tnt',
         ))
 
-
-
-        self.set_slot(8, SlotEntity(
+        self.set_slot(8, HotbarSlotEntity(
             texture=Assets.sandstone_carved,
             model=Assets.block,
             entity_type=SlotEntityType.BLOCK,
@@ -151,8 +151,9 @@ class HotbarUI:
 
         self.update_player_carried()
 
-    def set_slot(self, n, slot_entity: SlotEntity):
-        destroy(self.slots[n])
+    def set_slot(self, n, slot_entity: HotbarSlotEntity):
+        if self.slots[n]:
+            destroy(self.slots[n])
         self.slots[n] = slot_entity
         self.slots[n].x = selector_min_x + n * selector_off_unit
 
