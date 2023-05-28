@@ -19,7 +19,6 @@ if generate_grass_ground:
         for z in range(8):
             Level.set_block('grass', (x, 1, z))
 
-# Level.set_block('grass', (0, 1, 0))
 
 #
 # PistonBlock(position=(2, 2, 2))

@@ -1,3 +1,5 @@
+from ursina import Entity
+
 from block.block import Block
 
 
@@ -22,14 +24,14 @@ class FenceDoor(Block):
         return FenceDoor(position=position)
 
     def toggle(self):
-        if self.model_name == fetch_asset('fence-door'):
+        if self.model == fetch_asset('fence-door'):
             self.update_model(fetch_asset('fence-door-open'))
             self.collider = 'mesh'
 
-        elif self.model_name == fetch_asset('fence-door-open'):
+        elif self.model == fetch_asset('fence-door-open'):
             self.update_model(fetch_asset('fence-door'))
             self.collider = 'box'
 
-    def debug_on_hover_press(self, key):
+    def debug_on_hover_press(self, level_block: Entity, key):
         if key == 'm':
             self.toggle()

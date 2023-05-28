@@ -1,7 +1,7 @@
 from ursina import destroy, Button, color, scene, mouse, Entity
 
 from assets import AssetsManager, Assets
-from client import client, get_face_from_normal
+from client import client
 
 
 class Block:
@@ -18,12 +18,8 @@ class Block:
         Block.register_block('grass', Block(model=Assets.block, texture=Assets.grass))
         Block.register_block('tnt', Block(model=Assets.block, texture=Assets.tnt))
         Block.register_block('sandstone_carved', Block(model=Assets.block, texture=Assets.sandstone_carved))
-
-        # from block.piston import PistonBlock
-        # Block.register_block('piston', PistonBlock())
-        #
-        # from block.piston import StickPistonBlock
-        # Block.register_block('stick_piston', StickPistonBlock())
+        Block.register_block('sandstone_normal', Block(model=Assets.block, texture=Assets.sandstone_normal))
+        Block.register_block('sandstone_smooth', Block(model=Assets.block, texture=Assets.sandstone_smooth))
 
     def __init__(self, model='block', texture=None, **kwargs):
         # super().__init__(

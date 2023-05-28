@@ -1,4 +1,4 @@
-from ursina import application, load_model
+from ursina import application, load_model, Entity
 
 from block.block import Block
 
@@ -21,11 +21,11 @@ class EndFrame(Block):
     def place(self, position):
         return EndFrame(position=position)
 
-    def debug_on_hover_press(self, key):
+    def debug_on_hover_press(self, level_block: Entity, key):
         if key == 'p':
-            if self.model_name == fetch_asset("endframe"):
+            if self.model == fetch_asset("endframe"):
                 self.update_model(fetch_asset("endframe-eye"))
 
-            elif self.model_name == fetch_asset("endframe-eye"):
+            elif self.model == fetch_asset("endframe-eye"):
                 self.update_model(fetch_asset("endframe"))
 

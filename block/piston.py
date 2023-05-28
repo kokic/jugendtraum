@@ -18,20 +18,6 @@ def fetch_asset(name):
     return f"models/piston/{name}"
 
 
-def arm_phase2_animate(level_block: Entity, model, position):
-    def generator():
-        level_block.arm.update_model(fetch_asset(model))
-        level_block.arm.collider = 'mesh'
-
-        level_block.arm.animate_position(
-            value=position,
-            duration=half_duration,
-            curve=curve.out_expo
-        )
-
-    return generator
-
-
 class PistonBlock(Block):
 
     def __init__(self, texture=fetch_asset('piston.png')):
@@ -49,31 +35,6 @@ class PistonBlock(Block):
 
         # for key, value in kwargs.items():
         #     setattr(self, key, value)
-
-    # def rotate_by_face(self, face: ViewDirection):
-    #     if face.back():
-    #         self.rotation_y = 180
-    #     elif face.left():
-    #         self.rotation_y = 90
-    #     elif face.right():
-    #         self.rotation_y = -90
-    #     elif face.top():
-    #         self.rotation_x = 90
-    #     elif face.bottom():
-    #         self.rotation_x = -90
-
-    @staticmethod
-    def rotate_by_face(level_block: Entity, face: ViewDirection):
-        if face.back():
-            level_block.rotation_y = 180
-        elif face.left():
-            level_block.rotation_y = 90
-        elif face.right():
-            level_block.rotation_y = -90
-        elif face.top():
-            level_block.rotation_x = 90
-        elif face.bottom():
-            level_block.rotation_x = -90
 
     def place(self, position):
         face = get_face_from_normal(mouse.world_normal)
@@ -95,12 +56,51 @@ class PistonBlock(Block):
         # self.arm.on_remove()
         super().on_remove(level_block)
 
+    def is_hovered(self, level_block: Entity):
+        return super().is_hovered(level_block) or level_block.arm.hovered
+
+    def debug_on_hover_press(self, level_block: Entity, key):
+        if key == 'm':
+            PistonBlock.toggle(level_block)
+
+    @staticmethod
+    def debug_loop_toggle():
+        sequence = Sequence(Func(PistonBlock.toggle), duration=half_duration * 2, loop=True)
+        sequence.start()
+
+    @staticmethod
+    def rotate_by_face(level_block: Entity, face: ViewDirection):
+        if face.back():
+            level_block.rotation_y = 180
+        elif face.left():
+            level_block.rotation_y = 90
+        elif face.right():
+            level_block.rotation_y = -90
+        elif face.top():
+            level_block.rotation_x = 90
+        elif face.bottom():
+            level_block.rotation_x = -90
+
+    @staticmethod
+    def arm_phase2_animate(level_block: Entity, model, position):
+        def generator():
+            level_block.arm.update_model(fetch_asset(model))
+            level_block.arm.collider = 'mesh'
+
+            level_block.arm.animate_position(
+                value=position,
+                duration=half_duration,
+                curve=curve.out_expo
+            )
+
+        return Func(generator)
+
     @staticmethod
     def on_pushed(level_block: Entity):
         # self.animate_status_update(False)
         arm = level_block.arm
         arm.seq = arm.animate_position(push_phase1, duration=half_duration)[0]
-        arm.seq.append(Func(arm_phase2_animate(level_block, 'piston-push-arm-1', push_phase2)))
+        arm.seq.append(PistonBlock.arm_phase2_animate(level_block, 'piston-push-arm-1', push_phase2))
         # self.arm.seq.append(Func(lambda: self.animate_status_update(True)))
 
     @staticmethod
@@ -108,7 +108,7 @@ class PistonBlock(Block):
         # self.animate_status_update(False)
         arm = level_block.arm
         arm.seq = arm.animate_position(push_phase1, duration=half_duration)[0]
-        arm.seq.append(Func(arm_phase2_animate(level_block, 'piston-push-arm-0', (0, 0, 0))))
+        arm.seq.append(PistonBlock.arm_phase2_animate(level_block, 'piston-push-arm-0', (0, 0, 0)))
         # arm.seq.append(Func(lambda: self.animate_status_update(True)))
 
     @staticmethod
@@ -117,9 +117,6 @@ class PistonBlock(Block):
             # and not (hasattr(self.arm, 'seq') and not level_block.arm.seq.finished) \
         # and level_block.can_play_animate
 
-    def is_hovered(self, level_block: Entity):
-        return super().is_hovered(level_block) or level_block.arm.hovered
-
     @staticmethod
     def toggle(level_block: Entity):
         if PistonBlock.ready_model(level_block, 'piston-push-arm-0'):
@@ -127,14 +124,6 @@ class PistonBlock(Block):
 
         elif PistonBlock.ready_model(level_block, 'piston-push-arm-1'):
             return PistonBlock.on_pulled(level_block)
-
-    def debug_on_hover_press(self, level_block: Entity, key):
-        if key == 'm':
-            PistonBlock.toggle(level_block)
-
-    def debug_loop_toggle(self):
-        sequence = Sequence(Func(self.toggle), duration=half_duration * 2, loop=True)
-        sequence.start()
 
 
 class StickPistonBlock(PistonBlock):

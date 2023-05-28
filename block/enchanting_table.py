@@ -40,8 +40,8 @@ class EnchantingTable(Block):
         self.can_play_animate = True
         self.book_animate()
 
-    def place(self, position):
-        return EnchantingTable(position=position)
+    # def place(self, position):
+    #     return EnchantingTable(position=position)
 
     def book_animate(self):
         self.book_animate_aux()

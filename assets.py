@@ -1,3 +1,5 @@
+import os
+
 from PIL import Image
 from ursina import Texture, color
 
@@ -35,6 +37,7 @@ class AssetsManager:
         return Texture(image)
 
 
+# JSON
 class Assets:
     # models
     block = AssetsManager.get_model('block')
@@ -56,6 +59,18 @@ class Assets:
         'sandstone_bottom.png'
     )
 
+    sandstone_normal = AssetsManager.block_texture_48x16(
+        'sandstone_top.png',
+        'sandstone_normal.png',
+        'sandstone_bottom.png'
+    )
+
+    sandstone_smooth = AssetsManager.block_texture_48x16(
+        'sandstone_top.png',
+        'sandstone_smooth.png',
+        'sandstone_bottom.png'
+    )
+
     tnt = AssetsManager.block_texture_3('tnt')
 
     piston = AssetsManager.block_texture_3('piston')
@@ -64,6 +79,12 @@ class Assets:
         'piston_side.png',
         'piston_bottom.png'
     )
+
+#
+# isotropic = os.listdir(AssetsManager.get_blocks_image('isotropic'))
+# for name in isotropic:
+#     setattr(Assets, name, AssetsManager.get_blocks_image(f'isotropic/{name}'))
+#
 
 # image = Image.new('RGBA', (48, 16), color=(0, 0, 0, 0))
 # image.save('block.png')
