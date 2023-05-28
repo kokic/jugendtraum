@@ -2,7 +2,7 @@ from ursina import Ursina, held_keys, mouse
 
 from block.block import Level, Block
 from client import client
-from gui.hud_screen import HotbarUI
+from gui.hud import HotbarUI
 from gui.inventory import InventoryUI
 
 app = Ursina()
@@ -16,8 +16,8 @@ if generate_grass_ground:
         for z in range(8):
             Level.set_block('grass', (x, 1, z))
 
-#
-# PistonBlock(position=(2, 2, 2))
+Level.set_block('dirt', (0, 2, 2))
+
 # EndFrame(position=(3, 2, 2))
 # EnchantingTable(position=(4, 2, 2))
 # FenceDoor(position=(5, 2, 2))
@@ -27,16 +27,8 @@ player.gravity = 0
 player.y = 1.5
 
 hotbar = HotbarUI()
-inventory = InventoryUI()
+# inventory = InventoryUI()
 
-
-#
-# Block(position=(1, 2, 2), model='block', texture=AssetsManager.block_texture_3('tnt'))
-# Block(position=(2, 2, 2), model='block', texture=AssetsManager.block_texture_48x16(
-#     'sandstone_top.png',
-#     'sandstone_carved.png',
-#     'sandstone_bottom.png'
-# ))
 
 def update():
     if held_keys['space']:

@@ -46,8 +46,12 @@ class Assets:
 
     # item texture
     apple = AssetsManager.get_items_image('apple')
+    apple_golden = AssetsManager.get_items_image('apple_golden')
+    carrot = AssetsManager.get_items_image('carrot')
 
     # block texture
+    dirt = AssetsManager.get_blocks_image('isotropic/dirt')
+
     grass = AssetsManager.block_texture_48x16(
         'grass_carried.png',
         'grass_side_carried.png',

@@ -15,6 +15,8 @@ class Block:
     @staticmethod
     def init_blocks():
 
+        Block.register_block('dirt', IsotropicBlock())
+
         Block.register_block('grass', Block(model=Assets.block, texture=Assets.grass))
         Block.register_block('tnt', Block(model=Assets.block, texture=Assets.tnt))
         Block.register_block('sandstone_carved', Block(model=Assets.block, texture=Assets.sandstone_carved))
@@ -22,14 +24,6 @@ class Block:
         Block.register_block('sandstone_smooth', Block(model=Assets.block, texture=Assets.sandstone_smooth))
 
     def __init__(self, model='block', texture=None, **kwargs):
-        # super().__init__(
-        #     model=model,
-        #     texture=texture,
-        #     parent=scene,
-        #     color=color.color(0, 0, 0.85),
-        #     highlight_color=color.white,
-        # )
-
         self.model = model
         self.texture = texture
         self.identifier = 'block'
@@ -82,6 +76,17 @@ class Block:
 
             self.debug_on_hover_press(level_block, key)
 
+
+class IsotropicBlock(Block):
+    def __init__(self, texture=Assets.dirt, **kwargs):
+        super().__init__(model='isotropic', texture=texture)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+
+#
+# will be moved to level.py
+#
 
 class Level:
 
