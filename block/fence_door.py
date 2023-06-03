@@ -1,5 +1,6 @@
 from ursina import Entity
 
+from assets import Assets
 from block.block import Block
 
 
@@ -12,26 +13,22 @@ class FenceDoor(Block):
     def __init__(self, **kwargs):
         super().__init__(
             model=fetch_asset('fence-door'),
-            texture=fetch_asset('planks_oak.png'),
+            texture=Assets.planks_oak,
         )
 
-        self.collider = 'box'
+        self.collider = 'mesh'
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def place(self, position):
-        return FenceDoor(position=position)
-
-    def toggle(self):
-        if self.model == fetch_asset('fence-door'):
-            self.update_model(fetch_asset('fence-door-open'))
-            self.collider = 'mesh'
-
-        elif self.model == fetch_asset('fence-door-open'):
-            self.update_model(fetch_asset('fence-door'))
-            self.collider = 'box'
-
     def debug_on_hover_press(self, level_block: Entity, key):
         if key == 'm':
-            self.toggle()
+            if level_block.model.name == fetch_asset('fence-door'):
+                level_block.model = fetch_asset('fence-door-open')
+
+            elif level_block.model.name == fetch_asset('fence-door-open'):
+                level_block.model = fetch_asset('fence-door')
+
+            # model update
+            level_block.collider = 'mesh'
+

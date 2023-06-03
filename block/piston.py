@@ -1,7 +1,7 @@
 from ursina import curve, Func, Sequence, mouse, Vec3, Entity
 
 from block.block import Block
-from client import ViewDirection, get_face_from_normal
+from etale.client import ViewDirection, get_face_from_normal
 from entity.entity import EntityBlock
 
 half_duration = 0.3
@@ -25,6 +25,11 @@ class PistonBlock(Block):
             model=fetch_asset('piston-push-base'),
             texture=texture,
         )
+
+        # for slot entity view
+        from assets import Assets
+        self.slot_entity_model = 'block'
+        self.slot_entity_texture = Assets.piston
 
         # self.face = ViewDirection.FRONT
         # self.arm = EntityBlock(
@@ -130,6 +135,9 @@ class StickPistonBlock(PistonBlock):
     def __init__(self):
         super().__init__(fetch_asset('piston-stick.png'))
 
+        # for slot entity view
+        from assets import Assets
+        self.slot_entity_texture = Assets.stick_piston
 
-Block.register_block('piston', PistonBlock())
-Block.register_block('stick_piston', StickPistonBlock())
+
+

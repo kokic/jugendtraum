@@ -3,6 +3,7 @@ from ursina.prefabs.first_person_controller import FirstPersonController
 
 from entity.carried import CarriedItem
 
+
 # player hand-carried model:
 # - empty (hand model)
 # - item (dropping model)
@@ -18,7 +19,10 @@ class Player(FirstPersonController):
     def __init__(self):
         super().__init__()
 
+        # self.jump_height = 1.5
         self.carried = CarriedItem()
+
+    # TODO: use animation
 
     # def carried_input(self, key):
     #
@@ -34,32 +38,31 @@ class Player(FirstPersonController):
     #         curve=curve.linear
     #     )))
 
-        # if key == 'left mouse down':
-        #     rotation = self.carried.animate_rotation(
-        #         value=carried_rotation - Vec3(0, -30, 120),
-        #         duration=0.15,
-        #         curve=curve.in_out_circ
-        #     )[1]
-        #
-        #     rotation.append(Func(lambda: self.carried.animate_rotation(
-        #         value=carried_rotation,
-        #         duration=0.15,
-        #         curve=curve.in_out_circ
-        #     )))
+    # if key == 'left mouse down':
+    #     rotation = self.carried.animate_rotation(
+    #         value=carried_rotation - Vec3(0, -30, 120),
+    #         duration=0.15,
+    #         curve=curve.in_out_circ
+    #     )[1]
+    #
+    #     rotation.append(Func(lambda: self.carried.animate_rotation(
+    #         value=carried_rotation,
+    #         duration=0.15,
+    #         curve=curve.in_out_circ
+    #     )))
 
-            # position = self.carried.animate_position(
-            #     value=carried_position - Vec3(2.5, 0, -2),
-            #     duration=0.15,
-            #     curve=curve.linear
-            # )[0]
-            #
-            # position.append(Func(lambda: self.carried.animate_position(
-            #     value=carried_position,
-            #     duration=0.15,
-            #     curve=curve.linear
-            # )))
+    # position = self.carried.animate_position(
+    #     value=carried_position - Vec3(2.5, 0, -2),
+    #     duration=0.15,
+    #     curve=curve.linear
+    # )[0]
+    #
+    # position.append(Func(lambda: self.carried.animate_position(
+    #     value=carried_position,
+    #     duration=0.15,
+    #     curve=curve.linear
+    # )))
 
-        # if key == 'right mouse down':
-
+    # if key == 'right mouse down':
 
 # (0, -15, 0)

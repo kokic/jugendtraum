@@ -1,4 +1,4 @@
-from ursina import Entity, scene, color, destroy, Vec3, Vec2
+from ursina import Entity, destroy
 
 from assets import AssetsManager
 

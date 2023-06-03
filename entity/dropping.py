@@ -11,7 +11,7 @@ class Dropping(Entity):
     def __init__(self, **kwargs):
         super().__init__(
             model=AssetsManager.get_model('dropping'),
-            texture=AssetsManager.get_items_image('bow_standby'),
+            texture=AssetsManager.get_items_path('bow_standby'),
         )
 
         self.scale = 0.4

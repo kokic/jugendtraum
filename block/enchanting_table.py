@@ -1,8 +1,6 @@
-import math
-import random
+from ursina import curve, Func, Sequence, Entity
 
-from ursina import curve, Func, Sequence
-
+from assets import Assets
 from block.block import Block
 from entity.entity import EntityBlock
 
@@ -20,52 +18,58 @@ class EnchantingTable(Block):
     def __init__(self, **kwargs):
         super().__init__(
             model=fetch_asset('enchanting-table'),
-            texture=fetch_asset('enchanting_table.png'),
+            texture=Assets.enchanting_table,
         )
 
         # self.collider = 'mesh'
-        self.book = EntityBlock(
-            fetch_asset('enchanting-table-book'),
-            fetch_asset('enchanting_table_book.png')
-        )
-        self.book.parent = self
+        # self.book = EntityBlock(
+        #     fetch_asset('enchanting-table-book'),
+        #     fetch_asset('enchanting_table_book.png')
+        # )
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        self.sequence = Sequence(Func(self.book_animate_aux), duration=half_duration * 2, loop=True)
+    def place(self, position):
+        level_block = super().place(position)
+        level_block.book = EntityBlock(
+            fetch_asset('enchanting-table-book'),
+            fetch_asset('enchanting_table_book.png'),
+            parent=level_block
+        )
 
-        self.period_value = 0
+        func = Func(lambda: EnchantingTable.book_animate_aux(level_block))
+        level_block.sequence = Sequence(func, duration=half_duration * 2, loop=True)
+        # level_block.can_play_animate = True
+        EnchantingTable.book_animate(level_block)
 
-        self.can_play_animate = True
-        self.book_animate()
+        return level_block
 
-    # def place(self, position):
-    #     return EnchantingTable(position=position)
+    @staticmethod
+    def book_animate(level_block: Entity):
+        EnchantingTable.book_animate_aux(level_block)
+        level_block.sequence.start()
 
-    def book_animate(self):
-        self.book_animate_aux()
-        self.sequence.start()
+    @staticmethod
+    def book_animate_aux(level_block: Entity):
+        # if not self.can_play_animate:
+        #     return
 
-    def book_animate_aux(self):
-        if not self.can_play_animate:
-            return
-
-        pos = self.book.position + offset
-        seq = self.book.animate_position(
+        pos = level_block.book.position + offset
+        seq = level_block.book.animate_position(
             value=pos,
             duration=half_duration,
             curve=curve.linear,
         )[0]
 
-        seq.append(Func(lambda: self.book.animate_position(
+        seq.append(Func(lambda: level_block.book.animate_position(
             value=pos - offset,
             duration=half_duration,
             curve=curve.linear
         )))
 
-        self.book.animate_rotation(
-            value=self.book.rotation + (0, 180, 0),
+        level_block.book.animate_rotation(
+            value=level_block.book.rotation + (0, 180, 0),
             duration=half_duration * 2,
             curve=curve.linear
         )

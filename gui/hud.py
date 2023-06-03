@@ -1,32 +1,16 @@
 from PIL import Image
-from ursina import Texture, Sprite, destroy
+from ursina import Texture, Vec3, curve, Func
 
 from assets import AssetsManager, Assets
 from data.option import Option
-from gui.component.slot import SlotEntityType, SlotEntity
+from data.shared import Shared
+from gui.component.slot import SlotEntityType, SlotEntity, SlotData
 from gui.component.ui_element import UIElement
 
 gui_image = Image.open('images/gui/widgets.png')
 
 hotbar_texture = Texture(gui_image.crop((0, 0, 182, 22)))
 hotbar_selector_texture = Texture(gui_image.crop((0, 22, 24, 46)))
-
-# inventory
-
-item_textures = [
-    AssetsManager.get_items_image('carrot'),
-    'images/blocks/torch_on',
-    AssetsManager.get_items_image('iron_sword'),
-    AssetsManager.get_items_image('iron_pickaxe'),
-    AssetsManager.get_items_image('iron_axe'),
-    AssetsManager.get_items_image('apple'),
-    AssetsManager.get_items_image('arrow'),
-    AssetsManager.get_items_image('bone'),
-    AssetsManager.get_items_image('bucket_water'),
-]
-
-
-# items = os.listdir(AssetsManager.get_items_image(''))
 
 
 selector_off_unit = 0.044 * Option.ui_scale
@@ -45,7 +29,7 @@ class HotbarUI:
 
         # SlotEntity
         self.slots = []
-        self.slot_index = 0
+        self.selector_index = 0
 
         self.hotbar = UIElement(
             texture=hotbar_texture,
@@ -61,67 +45,58 @@ class HotbarUI:
             scale=0.054 * Option.ui_scale
         )
 
-        for n in range(9):
-            self.slots.append(SlotEntity(
-                texture=item_textures[n % len(item_textures)],
-                x=selector_min_x + n * selector_off_unit,
-                y=hotbar_position_y,
-            ))
+        # TODO: load items from inventory
+        self.create_slots()
 
-        self.set_slot(5, SlotEntity(
-            y=hotbar_position_y,
-            texture=Assets.piston,
-            model=Assets.block,
-            entity_type=SlotEntityType.BLOCK,
-            identifier='piston',
-        ))
-
-        self.set_slot(6, SlotEntity(
-            y=hotbar_position_y,
-            texture=Assets.stick_piston,
-            model=Assets.block,
-            entity_type=SlotEntityType.BLOCK,
-            identifier='stick_piston',
-        ))
-
-        self.set_slot(7, SlotEntity(
-            y=hotbar_position_y,
-            texture=Assets.tnt,
-            model=Assets.block,
-            entity_type=SlotEntityType.BLOCK,
-            identifier='tnt',
-        ))
-
-        self.set_slot(8, SlotEntity(
-            y=hotbar_position_y,
-            texture=Assets.sandstone_carved,
-            model=Assets.block,
-            entity_type=SlotEntityType.BLOCK,
-            identifier='sandstone_carved',
-        ))
+        # self.debug_set_slots()
 
         self.update_player_carried()
 
-    def set_slot(self, n, slot_entity: SlotEntity):
-        if self.slots[n]:
-            destroy(self.slots[n])
-        self.slots[n] = slot_entity
-        self.slots[n].x = selector_min_x + n * selector_off_unit
+    def debug_set_slots(self):
+        pass
 
-    def get_selected(self) -> Sprite:
-        return self.slots[self.slot_index]
+    def create_slots(self):
+        from etale.client import client
+        hotbar_slots = client.inventory_ui.hotbar_slots
+        for n in range(len(hotbar_slots)):
+            slot = SlotEntity(
+                x=selector_min_x + n * selector_off_unit,
+                y=hotbar_position_y,
+            )
+            hotbar_slots[n].get_data().set_data_to(slot)
+            self.slots.append(slot)
+
+    def set_slot(self, n, data: SlotData = SlotData.empty):
+        data.set_data_to(self.slots[n])
+
+        if self.selector_index == n:
+            self.update_player_carried()
+
+    def get_selected_data(self) -> SlotData:
+        return self.slots[self.selector_index].get_data()
 
     def update_player_carried(self):
-        from client import client
+        from etale.client import client
+        from entity.carried import CarriedItem
+
         carried = client.player.carried
-        carried.set_entity(self.get_selected())
+        base_position = CarriedItem.get_base_position(carried.entity_type)
+        target_position = CarriedItem.get_base_position(self.get_selected_data().entity_type)
 
-    def move_selector(self):
-        if self.slot_index >= 8:
-            self.selector.x = selector_min_x
-            self.slot_index = 0
-        else:
-            self.selector.x += selector_off_unit
-            self.slot_index += 1
+        seq = carried.animate_position(
+            value=base_position - Vec3(0, Shared.carried_down_offset, 0),
+            duration=Shared.carried_up_animation_duration,
+            curve=curve.linear
+        )[1]
+        seq.append(Func(lambda: self.get_selected_data().set_data_to(client.player.carried)))
+        seq.append(Func(lambda: carried.animate_position(
+            value=target_position,
+            duration=Shared.carried_down_animation_duration,
+            curve=curve.linear
+        )))
 
+    def move_selector(self, offset=1):
+        real_offset = (self.selector_index + offset) % 9 - self.selector_index
+        self.selector.x += selector_off_unit * real_offset
+        self.selector_index += real_offset
         self.update_player_carried()

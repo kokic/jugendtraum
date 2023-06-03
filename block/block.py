@@ -1,7 +1,8 @@
 from ursina import destroy, Button, color, scene, mouse, Entity
 
 from assets import AssetsManager, Assets
-from client import client
+from entity.carried import CarriedItem
+from etale.client import client
 
 
 class Block:
@@ -12,21 +13,14 @@ class Block:
         block.identifier = identifier
         Block.blocks[identifier] = block
 
-    @staticmethod
-    def init_blocks():
-
-        Block.register_block('dirt', IsotropicBlock())
-
-        Block.register_block('grass', Block(model=Assets.block, texture=Assets.grass))
-        Block.register_block('tnt', Block(model=Assets.block, texture=Assets.tnt))
-        Block.register_block('sandstone_carved', Block(model=Assets.block, texture=Assets.sandstone_carved))
-        Block.register_block('sandstone_normal', Block(model=Assets.block, texture=Assets.sandstone_normal))
-        Block.register_block('sandstone_smooth', Block(model=Assets.block, texture=Assets.sandstone_smooth))
-
     def __init__(self, model='block', texture=None, **kwargs):
         self.model = model
         self.texture = texture
         self.identifier = 'block'
+        self.collider = 'box'
+
+        self.slot_entity_model = model
+        self.slot_entity_texture = texture
 
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -44,27 +38,24 @@ class Block:
         return level_block.hovered
 
     def place(self, position):
-        # carried = client.player.carried
-        # if carried.entity_type.is_block():
-        #
-        #     if carried.identifier in Block.blocks:
-        #         return Block.blocks[carried.identifier].place(position)
-        #
-        level_block = Button(model=self.model, texture=self.texture, position=position)
-        level_block.parent = scene
-        level_block.color = color.color(0, 0, 0.85)
-        level_block.highlight_color = color.white
+        level_block = place_prototype_block(self.model, self.texture, position)
+        level_block.collider = self.collider
         level_block.input = lambda key: self.input(level_block, key)
-
         return level_block
 
     def on_use(self, position):
         self.place(position + mouse.world_normal)
 
+    def on_use_carried(self, level_block: Entity, carried: CarriedItem):
+        pass
+
     def debug_on_hover_press(self, level_block: Entity, key):
         return
 
     def input(self, level_block: Entity, key):
+        if client.player_operation_blocked:
+            return
+
         if self.is_hovered(level_block):
             if key == 'left mouse down':
                 self.on_remove(level_block)
@@ -73,8 +64,18 @@ class Block:
                 identifier = carried.identifier
                 if carried.entity_type.is_block() and identifier in Block.blocks:
                     Block.blocks[identifier].on_use(level_block.position)
+                else:
+                    self.on_use_carried(level_block, carried)
 
             self.debug_on_hover_press(level_block, key)
+
+
+def place_prototype_block(model, texture, position):
+    prototype_block = Button(model=model, texture=texture, position=position)
+    prototype_block.parent = scene
+    prototype_block.color = color.color(0, 0, 0.85)
+    prototype_block.highlight_color = color.white
+    return prototype_block
 
 
 class IsotropicBlock(Block):
@@ -82,17 +83,3 @@ class IsotropicBlock(Block):
         super().__init__(model='isotropic', texture=texture)
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-
-#
-# will be moved to level.py
-#
-
-class Level:
-
-    @staticmethod
-    def set_block(identifier: str, position):
-        if identifier in Block.blocks:
-            block = Block.blocks[identifier]
-            block.place(position)
-        # not exists

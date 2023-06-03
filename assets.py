@@ -10,11 +10,11 @@ class AssetsManager:
         return f"models/{name}"
 
     @staticmethod
-    def get_items_image(name):
+    def get_items_path(name):
         return f"images/items/{name}"
 
     @staticmethod
-    def get_blocks_image(name):
+    def get_blocks_path(name):
         return f"images/blocks/{name}"
 
     @staticmethod
@@ -27,10 +27,10 @@ class AssetsManager:
 
     @staticmethod
     def block_texture_48x16(top, side, bottom) -> Texture:
-        top_image = Image.open(AssetsManager.get_blocks_image(top))
-        side_image = Image.open(AssetsManager.get_blocks_image(side))
-        bottom_image = Image.open(AssetsManager.get_blocks_image(bottom))
-        image = Image.open('images/block_48x16.png')
+        top_image = Image.open(AssetsManager.get_blocks_path(top))
+        side_image = Image.open(AssetsManager.get_blocks_path(side))
+        bottom_image = Image.open(AssetsManager.get_blocks_path(bottom))
+        image = Image.open('images/empty_48x16.png')
         image.paste(top_image, (0, 0))
         image.paste(side_image, (16, 0))
         image.paste(bottom_image, (32, 0))
@@ -45,12 +45,14 @@ class Assets:
     block = AssetsManager.get_model('block')
 
     # item texture
-    apple = AssetsManager.get_items_image('apple')
-    apple_golden = AssetsManager.get_items_image('apple_golden')
-    carrot = AssetsManager.get_items_image('carrot')
+    empty = Texture(Image.new('RGBA', (16, 16), color=(0, 0, 0, 0)))
+    apple = AssetsManager.get_items_path('apple')
+    apple_golden = AssetsManager.get_items_path('apple_golden')
+    carrot = AssetsManager.get_items_path('carrot')
 
     # block texture
-    dirt = AssetsManager.get_blocks_image('isotropic/dirt')
+    dirt = AssetsManager.get_blocks_path('isotropic/dirt')
+    planks_oak = AssetsManager.get_blocks_path('isotropic/planks_oak')
 
     grass = AssetsManager.block_texture_48x16(
         'grass_carried.png',
@@ -83,6 +85,18 @@ class Assets:
         'piston_top_sticky.png',
         'piston_side.png',
         'piston_bottom.png'
+    )
+
+    endframe = AssetsManager.block_texture_48x16(
+        'endframe_top.png',
+        'endframe_side.png',
+        'end_stone.png'
+    )
+
+    enchanting_table = AssetsManager.block_texture_48x16(
+        'enchanting_table_top.png',
+        'enchanting_table_side.png',
+        'enchanting_table_bottom.png'
     )
 
 #
