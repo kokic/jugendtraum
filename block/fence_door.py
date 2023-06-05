@@ -21,14 +21,26 @@ class FenceDoor(Block):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def debug_on_hover_press(self, level_block: Entity, key):
-        if key == 'm':
-            if level_block.model.name == fetch_asset('fence-door'):
-                level_block.model = fetch_asset('fence-door-open')
+    def on_right_mouse_down(self, level_block: Entity) -> bool:
+        if level_block.model.name == fetch_asset('fence-door'):
+            level_block.model = fetch_asset('fence-door-open')
 
-            elif level_block.model.name == fetch_asset('fence-door-open'):
-                level_block.model = fetch_asset('fence-door')
+        elif level_block.model.name == fetch_asset('fence-door-open'):
+            level_block.model = fetch_asset('fence-door')
 
-            # model update
-            level_block.collider = 'mesh'
+        level_block.collider = 'mesh'
+
+        # prevent after
+        return True
+
+    # def debug_on_hover_press(self, level_block: Entity, key):
+    #     if key == 'm':
+    #         if level_block.model.name == fetch_asset('fence-door'):
+    #             level_block.model = fetch_asset('fence-door-open')
+    #
+    #         elif level_block.model.name == fetch_asset('fence-door-open'):
+    #             level_block.model = fetch_asset('fence-door')
+    #
+    #         # model update
+    #         level_block.collider = 'mesh'
 

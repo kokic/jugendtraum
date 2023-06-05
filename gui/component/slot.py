@@ -12,13 +12,16 @@ class SlotEntityType(Enum):
     ITEM = auto(),
     BLOCK = auto(),
 
+    def is_empty(self):
+        return self is SlotEntityType.EMPTY
+
     def is_item(self):
         return self is SlotEntityType.ITEM
 
     def is_block(self):
         return self is SlotEntityType.BLOCK
 
-    def get_scale(self) -> float:
+    def get_scale(self) -> Vec3 | float:
         if self.is_item():
             return 0.035
         elif self.is_block():
@@ -26,13 +29,13 @@ class SlotEntityType(Enum):
 
         return 0.035
 
-    def get_rotation(self) -> Vec3:
+    def get_rotation(self) -> Vec3 | float:
         if self is SlotEntityType.ITEM:
-            return Vec3(0, 0, 0)
+            return 0
         elif self is SlotEntityType.BLOCK:
             return Vec3(-15, 45, 15)
 
-        return Vec3(0, 0, 0)
+        return 0
 
 
 class SlotData:

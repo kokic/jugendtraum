@@ -10,6 +10,10 @@ class AssetsManager:
         return f"models/{name}"
 
     @staticmethod
+    def get_mob_path(name):
+        return f"models/mob/{name}"
+
+    @staticmethod
     def get_items_path(name):
         return f"images/items/{name}"
 
@@ -49,6 +53,8 @@ class Assets:
     apple = AssetsManager.get_items_path('apple')
     apple_golden = AssetsManager.get_items_path('apple_golden')
     carrot = AssetsManager.get_items_path('carrot')
+
+    ender_eye = AssetsManager.get_items_path('ender_eye.png')
 
     # block texture
     dirt = AssetsManager.get_blocks_path('isotropic/dirt')
@@ -92,6 +98,7 @@ class Assets:
         'endframe_side.png',
         'end_stone.png'
     )
+    endframe_eye = AssetsManager.get_blocks_path('endframe_eye.png')
 
     enchanting_table = AssetsManager.block_texture_48x16(
         'enchanting_table_top.png',

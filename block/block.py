@@ -3,6 +3,7 @@ from ursina import destroy, Button, color, scene, mouse, Entity
 from assets import AssetsManager, Assets
 from entity.carried import CarriedItem
 from etale.client import client
+from item.item import Item
 
 
 class Block:
@@ -52,6 +53,13 @@ class Block:
     def debug_on_hover_press(self, level_block: Entity, key):
         return
 
+    def on_right_mouse_down(self, level_block: Entity) -> bool:
+        return
+
+    # carried empty and target has an item ...
+    def on_take_out(self, level_block: Entity):
+        pass
+
     def input(self, level_block: Entity, key):
         if client.player_operation_blocked:
             return
@@ -60,12 +68,25 @@ class Block:
             if key == 'left mouse down':
                 self.on_remove(level_block)
             elif key == 'right mouse down':
+                if self.on_right_mouse_down(level_block):
+                    return
+
                 carried = client.player.carried
+                carried_type = carried.entity_type
                 identifier = carried.identifier
-                if carried.entity_type.is_block() and identifier in Block.blocks:
+
+                if carried_type.is_block() and identifier in Block.blocks:
                     Block.blocks[identifier].on_use(level_block.position)
-                else:
-                    self.on_use_carried(level_block, carried)
+
+                elif carried_type.is_item() and identifier in Item.items:
+                    item: Item = Item.items[identifier]
+                    item.use_on(carried, self, level_block)
+
+                elif carried_type.is_empty():
+                    self.on_take_out(level_block)
+
+                # else:
+                #     self.on_use_carried(level_block, carried)
 
             self.debug_on_hover_press(level_block, key)
 

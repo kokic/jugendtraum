@@ -2,6 +2,8 @@ from ursina import curve, Func, Vec3
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 from entity.carried import CarriedItem
+from gui.component.slot import SlotEntityType, SlotData
+from item.item import Item
 
 
 # player hand-carried model:

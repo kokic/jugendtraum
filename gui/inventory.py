@@ -1,7 +1,7 @@
 import math
 
 from PIL import Image
-from ursina import Texture, mouse
+from ursina import Texture, mouse, Vec3
 
 from assets import Assets, AssetsManager
 from data.option import Option
@@ -70,13 +70,23 @@ class InventoryUI(UIElement):
         # ))
         # self.slot_index += 1
 
-        import os
-        for name in os.listdir(AssetsManager.get_items_path('')):
+        # import os
+        # for name in os.listdir(AssetsManager.get_items_path('')):
+        #     data = SlotData(
+        #         model=Assets.dropping,
+        #         texture=AssetsManager.get_items_path(name),
+        #         entity_type=SlotEntityType.ITEM,
+        #         identifier=name[:-4]
+        #     )
+        #     self.items.append(data)
+
+        from item.item import Item
+        for item in Item.items.values():
             data = SlotData(
                 model=Assets.dropping,
-                texture=AssetsManager.get_items_path(name),
+                texture=item.texture,
                 entity_type=SlotEntityType.ITEM,
-                identifier=name[:-4]
+                identifier=item.identifier,
             )
             self.items.append(data)
 
@@ -205,9 +215,18 @@ class InventoryUI(UIElement):
             child.enable()
 
         for n in range(27):
-            self.slots[self.page_index * 27 + n].enable()
+            index = self.page_index * 27 + n
+            if index < self.slot_counter:
+                self.slots[index].enable()
 
         super().enable()
+
+    def set_slot(self, index, data: SlotData):
+        data.set_data_to(self.hotbar_slots[index])
+
+        if index < 9:
+            from etale.client import client
+            client.hotbar_ui.set_slot(index, data)
 
     def create_slot(self, item: SlotData):
         # if self.slot_index >= 27:

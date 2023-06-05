@@ -1,15 +1,17 @@
-from ursina import Ursina, held_keys, mouse, Vec3, camera, scene
+from ursina import Ursina, held_keys, mouse, Vec3, camera, scene, window, color, InputField
 
 from block.block_importer import init_blocks
 from etale.client import client
 from item.item_importer import init_items
 from level.level import Level
 
-app = Ursina()
+app = Ursina(development_mode=True)
+
+# rgba(172, 210, 255, 1)
+window.color = color.rgba(0.67, 0.82, 1, 1)
 
 init_blocks()
 init_items()
-
 
 #
 generate_grass_ground = True
@@ -25,9 +27,6 @@ Level.set_block('dirt', (-2, 2, 2))
 Level.set_block('endframe', (-1, 2, 2))
 Level.set_block('enchanting_table', (0, 2, 2))
 Level.set_block('fence_door', (1, 2, 2))
-
-
-
 
 #
 # from PIL import Image
@@ -69,8 +68,6 @@ if show_woolen_code:
         identifier = 'wool_colored_black' if value == 0 else 'wool_colored_white'
         Level.set_block(identifier, (x, y, 5))
 
-
-
 client.load()
 
 # EndFrame(position=(3, 2, 2))
@@ -81,6 +78,7 @@ player = client.player
 player.gravity = 0
 player.y = 1.5
 
+
 def update():
     if held_keys['space']:
         player.y += 0.2
@@ -90,7 +88,12 @@ def update():
     client.inventory_ui.mouse_selected.position = mouse.position - Vec3(0.005, 0.005, 0)
 
 
+command_input = InputField()
+command_input.disable()
+
+
 def input(key):
+    # print(key)
     if key == 'escape':
         if client.inventory_ui.enabled:
             client.inventory_ui.disable()
@@ -98,16 +101,24 @@ def input(key):
             from ursina import application
             application.quit()
 
+    # if key == '/':
+    #     client.player.disable()
+    #     command_input.enable()
+    #
+    # if key == 'enter' and command_input.enabled:
+    #     command_input.disable()
+    #     print(command_input.text)
+
     if key == 'o':
         mouse.locked = False
 
     if key == 'g':
         player.gravity = 1 - player.gravity
 
-    if key == 'b':
+    if key == 'scroll up':
         client.hotbar_ui.move_selector(-1)
 
-    if key == 'n':
+    if key == 'scroll down':
         client.hotbar_ui.move_selector()
 
     if key == 'e':
