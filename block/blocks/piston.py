@@ -1,8 +1,9 @@
-from ursina import curve, Func, Sequence, mouse, Vec3, Entity
+from ursina import curve, Func, Sequence, mouse, Vec3, Entity, Audio
 
+from assets import Assets, AssetsManager
 from block.block import Block
-from etale.client import ViewDirection, get_face_from_normal
 from entity.entity import EntityBlock
+from etale.face import get_face_from_normal, ViewDirection
 
 half_duration = 0.3
 # 0.3
@@ -18,9 +19,11 @@ def fetch_asset(name):
     return f"models/piston/{name}"
 
 
-class PistonBlock(Block):
+class Piston(Block):
 
     def __init__(self, texture=fetch_asset('piston.png')):
+
+        # maybe use standard block to replace base state
         super().__init__(
             model=fetch_asset('piston-push-base'),
             texture=texture,
@@ -28,7 +31,7 @@ class PistonBlock(Block):
 
         # for slot entity view
         from assets import Assets
-        self.slot_entity_model = 'block'
+        self.slot_entity_model = Assets.block
         self.slot_entity_texture = Assets.piston
 
         # self.face = ViewDirection.FRONT
@@ -44,13 +47,14 @@ class PistonBlock(Block):
     def place(self, position):
         face = get_face_from_normal(mouse.world_normal)
         level_block = super().place(position)
-        PistonBlock.rotate_by_face(level_block, face)
+        Piston.rotate_by_face(level_block, face)
 
         level_block.arm = EntityBlock(
             fetch_asset('piston-push-arm-0'),
             self.texture,
             parent=level_block,
         )
+        level_block.arm.collider = 'block'
 
         return level_block
 
@@ -66,11 +70,11 @@ class PistonBlock(Block):
 
     def debug_on_hover_press(self, level_block: Entity, key):
         if key == 'm':
-            PistonBlock.toggle(level_block)
+            Piston.toggle(level_block)
 
     @staticmethod
     def debug_loop_toggle():
-        sequence = Sequence(Func(PistonBlock.toggle), duration=half_duration * 2, loop=True)
+        sequence = Sequence(Func(Piston.toggle), duration=half_duration * 2, loop=True)
         sequence.start()
 
     @staticmethod
@@ -105,16 +109,21 @@ class PistonBlock(Block):
         # self.animate_status_update(False)
         arm = level_block.arm
         arm.seq = arm.animate_position(push_phase1, duration=half_duration)[0]
-        arm.seq.append(PistonBlock.arm_phase2_animate(level_block, 'piston-push-arm-1', push_phase2))
+        arm.seq.append(Piston.arm_phase2_animate(level_block, 'piston-push-arm-1', push_phase2))
+
         # self.arm.seq.append(Func(lambda: self.animate_status_update(True)))
+        AssetsManager.get_sound('piston-out').play()
 
     @staticmethod
     def on_pulled(level_block: Entity):
         # self.animate_status_update(False)
+
         arm = level_block.arm
         arm.seq = arm.animate_position(push_phase1, duration=half_duration)[0]
-        arm.seq.append(PistonBlock.arm_phase2_animate(level_block, 'piston-push-arm-0', (0, 0, 0)))
+        arm.seq.append(Piston.arm_phase2_animate(level_block, 'piston-push-arm-0', (0, 0, 0)))
         # arm.seq.append(Func(lambda: self.animate_status_update(True)))
+
+        AssetsManager.get_sound('piston-in').play()
 
     @staticmethod
     def ready_model(level_block: Entity, name):
@@ -124,20 +133,17 @@ class PistonBlock(Block):
 
     @staticmethod
     def toggle(level_block: Entity):
-        if PistonBlock.ready_model(level_block, 'piston-push-arm-0'):
-            return PistonBlock.on_pushed(level_block)
+        if Piston.ready_model(level_block, 'piston-push-arm-0'):
+            return Piston.on_pushed(level_block)
 
-        elif PistonBlock.ready_model(level_block, 'piston-push-arm-1'):
-            return PistonBlock.on_pulled(level_block)
+        elif Piston.ready_model(level_block, 'piston-push-arm-1'):
+            return Piston.on_pulled(level_block)
 
 
-class StickPistonBlock(PistonBlock):
+class StickPiston(Piston):
     def __init__(self):
         super().__init__(fetch_asset('piston-stick.png'))
 
         # for slot entity view
         from assets import Assets
         self.slot_entity_texture = Assets.stick_piston
-
-
-
