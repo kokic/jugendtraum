@@ -22,29 +22,30 @@ def init_blocks():
     Block.register_block('cobblestone', IsotropicBlock(Assets.cobblestone))
     Block.register_block('cobblestone_mossy', IsotropicBlock(Assets.cobblestone_mossy))
     Block.register_block('command_block', IsotropicBlock(Assets.command_block))
-    Block.register_block('concrete_black', IsotropicBlock(Assets.concrete_black))
-    Block.register_block('concrete_blue', IsotropicBlock(Assets.concrete_blue))
-    Block.register_block('concrete_brown', IsotropicBlock(Assets.concrete_brown))
-    Block.register_block('concrete_cyan', IsotropicBlock(Assets.concrete_cyan))
-    Block.register_block('concrete_gray', IsotropicBlock(Assets.concrete_gray))
-    Block.register_block('concrete_green', IsotropicBlock(Assets.concrete_green))
-    Block.register_block('concrete_light_blue', IsotropicBlock(Assets.concrete_light_blue))
-    Block.register_block('concrete_lime', IsotropicBlock(Assets.concrete_lime))
-    Block.register_block('concrete_magenta', IsotropicBlock(Assets.concrete_magenta))
-    Block.register_block('concrete_orange', IsotropicBlock(Assets.concrete_orange))
-    Block.register_block('concrete_pink', IsotropicBlock(Assets.concrete_pink))
-    Block.register_block('concrete_purple', IsotropicBlock(Assets.concrete_purple))
-    Block.register_block('concrete_red', IsotropicBlock(Assets.concrete_red))
-    Block.register_block('concrete_silver', IsotropicBlock(Assets.concrete_silver))
-    Block.register_block('concrete_white', IsotropicBlock(Assets.concrete_white))
-    Block.register_block('concrete_yellow', IsotropicBlock(Assets.concrete_yellow))
+
+    # until shaders
+    # Block.register_block('concrete_black', IsotropicBlock(Assets.concrete_black))
+    # Block.register_block('concrete_blue', IsotropicBlock(Assets.concrete_blue))
+    # Block.register_block('concrete_brown', IsotropicBlock(Assets.concrete_brown))
+    # Block.register_block('concrete_cyan', IsotropicBlock(Assets.concrete_cyan))
+    # Block.register_block('concrete_gray', IsotropicBlock(Assets.concrete_gray))
+    # Block.register_block('concrete_green', IsotropicBlock(Assets.concrete_green))
+    # Block.register_block('concrete_light_blue', IsotropicBlock(Assets.concrete_light_blue))
+    # Block.register_block('concrete_lime', IsotropicBlock(Assets.concrete_lime))
+    # Block.register_block('concrete_magenta', IsotropicBlock(Assets.concrete_magenta))
+    # Block.register_block('concrete_orange', IsotropicBlock(Assets.concrete_orange))
+    # Block.register_block('concrete_pink', IsotropicBlock(Assets.concrete_pink))
+    # Block.register_block('concrete_purple', IsotropicBlock(Assets.concrete_purple))
+    # Block.register_block('concrete_red', IsotropicBlock(Assets.concrete_red))
+    # Block.register_block('concrete_silver', IsotropicBlock(Assets.concrete_silver))
+    # Block.register_block('concrete_white', IsotropicBlock(Assets.concrete_white))
+    # Block.register_block('concrete_yellow', IsotropicBlock(Assets.concrete_yellow))
+
     Block.register_block('diamond_block', IsotropicBlock(Assets.diamond_block))
     Block.register_block('diamond_ore', IsotropicBlock(Assets.diamond_ore))
     Block.register_block('dirt', IsotropicBlock(Assets.dirt))
     Block.register_block('emerald_block', IsotropicBlock(Assets.emerald_block))
-    Block.register_block('ender_chest_front', IsotropicBlock(Assets.ender_chest_front))
-    Block.register_block('ender_chest_side', IsotropicBlock(Assets.ender_chest_side))
-    Block.register_block('ender_chest_top', IsotropicBlock(Assets.ender_chest_top))
+
     Block.register_block('end_stone', IsotropicBlock(Assets.end_stone))
     Block.register_block('glowing_obsidian', IsotropicBlock(Assets.glowing_obsidian))
     Block.register_block('glowstone', IsotropicBlock(Assets.glowstone))
@@ -56,12 +57,18 @@ def init_blocks():
     Block.register_block('lapis_ore', IsotropicBlock(Assets.lapis_ore))
     Block.register_block('mob_spawner', IsotropicBlock(Assets.mob_spawner))
     Block.register_block('nether_brick', IsotropicBlock(Assets.nether_brick))
+
     Block.register_block('planks_acacia', IsotropicBlock(Assets.planks_acacia))
     Block.register_block('planks_big_oak', IsotropicBlock(Assets.planks_big_oak))
     Block.register_block('planks_birch', IsotropicBlock(Assets.planks_birch))
     Block.register_block('planks_jungle', IsotropicBlock(Assets.planks_jungle))
     Block.register_block('planks_oak', IsotropicBlock(Assets.planks_oak))
     Block.register_block('planks_spruce', IsotropicBlock(Assets.planks_spruce))
+
+    from block.blocks.slab import Slab
+    Block.register_block('planks_birch_slab', Slab(Assets.planks_birch))
+    Block.register_block('planks_oak_slab', Slab(Assets.planks_oak))
+
     Block.register_block('quartz_block_side', IsotropicBlock(Assets.quartz_block_side))
     Block.register_block('quartz_ore', IsotropicBlock(Assets.quartz_ore))
     Block.register_block('redstone_block', IsotropicBlock(Assets.redstone_block))
@@ -93,32 +100,38 @@ def init_blocks():
 
     # block
 
-    Block.register_block('grass', Block(model=Assets.block, texture=Assets.grass))
-    Block.register_block('tnt', Block(model=Assets.block, texture=Assets.tnt))
+    Block.register_block('grass', Block(texture=Assets.grass, sound_name_on_destroy='dig-grass1'))
+    Block.register_block('tnt', Block(texture=Assets.tnt, sound_name_on_destroy='dig-grass1'))
 
-    Block.register_block('log_big_oak', Block(model=Assets.block, texture=Assets.log_big_oak))
-    Block.register_block('log_birch', Block(model=Assets.block, texture=Assets.log_birch))
-    Block.register_block('log_oak', Block(model=Assets.block, texture=Assets.log_oak))
-    Block.register_block('log_jungle', Block(model=Assets.block, texture=Assets.log_jungle))
-    Block.register_block('log_spruce', Block(model=Assets.block, texture=Assets.log_spruce))
+    from block.blocks.torch import Torch
+    Block.register_block('torch', Torch())
+
+    from block.blocks.log import Log
+    Block.register_block('log_big_oak', Log(Assets.log_big_oak))
+    Block.register_block('log_birch', Log(Assets.log_birch))
+    Block.register_block('log_oak', Log(Assets.log_oak))
+    Block.register_block('log_jungle', Log(Assets.log_jungle))
+    Block.register_block('log_spruce', Log(Assets.log_spruce))
 
     Block.register_block('sandstone_carved', Block(model=Assets.block, texture=Assets.sandstone_carved))
     Block.register_block('sandstone_normal', Block(model=Assets.block, texture=Assets.sandstone_normal))
     Block.register_block('sandstone_smooth', Block(model=Assets.block, texture=Assets.sandstone_smooth))
 
-    from block.piston import PistonBlock
-    from block.piston import StickPistonBlock
-    Block.register_block('piston', PistonBlock())
-    Block.register_block('stick_piston', StickPistonBlock())
+    from block.blocks.piston import Piston
+    from block.blocks.piston import StickPiston
+    Block.register_block('piston', Piston())
+    Block.register_block('stick_piston', StickPiston())
 
-    from block.endframe import EndFrame
+    from block.blocks.endframe import EndFrame
     Block.register_block('endframe', EndFrame())
 
-    from block.enchanting_table import EnchantingTable
+    from block.blocks.enchanting_table import EnchantingTable
     Block.register_block('enchanting_table', EnchantingTable())
 
-    from block.fence_door import FenceDoor
+    from block.blocks.fence_door import FenceDoor
     Block.register_block('fence_door', FenceDoor())
+
+
 
 
 

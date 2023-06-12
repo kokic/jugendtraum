@@ -2,6 +2,7 @@ from ursina import Entity
 
 from assets import Assets
 from block.block import Block
+from entity.carried import CarriedItem
 
 
 def fetch_asset(name):
@@ -21,7 +22,7 @@ class FenceDoor(Block):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-    def on_right_mouse_down(self, level_block: Entity) -> bool:
+    def on_right_mouse_down(self, level_block: Entity, carried: CarriedItem) -> bool:
         if level_block.model.name == fetch_asset('fence-door'):
             level_block.model = fetch_asset('fence-door-open')
 
@@ -30,7 +31,7 @@ class FenceDoor(Block):
 
         level_block.collider = 'mesh'
 
-        # prevent after
+        # prevent default
         return True
 
     # def debug_on_hover_press(self, level_block: Entity, key):

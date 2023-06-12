@@ -22,6 +22,7 @@ class EntityBlock(Entity):
             model=model,
             texture=texture,
             position=position,
+            collider='mesh'
         )
 
         self.model_name = model
@@ -33,7 +34,7 @@ class EntityBlock(Entity):
         destroy(self)
 
     def use_model(self, name):
-        return self.model_name == AssetsManager.get_model(name)
+        return self.model_name == AssetsManager.get_model_path(name)
 
     def update_model(self, name):
         self.model = self.model_name = name

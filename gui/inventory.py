@@ -97,7 +97,7 @@ class InventoryUI(UIElement):
             data = SlotData(
                 model=block.slot_entity_model,
                 texture=block.slot_entity_texture,
-                entity_type=SlotEntityType.BLOCK,
+                entity_type=block.slot_entity_type,
                 identifier=block.identifier,
             )
             self.items.append(data)
@@ -124,7 +124,7 @@ class InventoryUI(UIElement):
             hotbar_slot.on_click = self.on_hotbar_slot_click(hotbar_slot)
             self.hotbar_slots.append(hotbar_slot)
 
-        self.debug_set_slot()
+        # self.debug_set_slot()
 
         # wait for all children
         self.disable()

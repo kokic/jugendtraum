@@ -62,11 +62,12 @@ class EnchantingTable(Block):
             curve=curve.linear,
         )[0]
 
-        seq.append(Func(lambda: level_block.book.animate_position(
+        seq.append(Func(
+            level_block.book.animate_position,
             value=pos - offset,
             duration=half_duration,
             curve=curve.linear
-        )))
+        ))
 
         level_block.book.animate_rotation(
             value=level_block.book.rotation + (0, 180, 0),

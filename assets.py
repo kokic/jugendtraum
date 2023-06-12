@@ -1,7 +1,9 @@
+import math
 import os
+import random
 
 from PIL import Image
-from ursina import Texture, color
+from ursina import Texture, color, Audio, Sequence, Func, Wait, load_model
 
 
 # from PIL import Image
@@ -9,8 +11,17 @@ from ursina import Texture, color
 
 
 class AssetsManager:
+
     @staticmethod
-    def get_model(name):
+    def get_sound_path(name):
+        return f"sound/{name}"
+
+    @staticmethod
+    def get_music_path(name):
+        return f"music/{name}"
+
+    @staticmethod
+    def get_model_path(name):
         return f"models/{name}"
 
     @staticmethod
@@ -60,6 +71,94 @@ class AssetsManager:
         image.paste(bottom_image, (32, 0))
         return Texture(image)
 
+    # sound
+
+    __sounds: dict[str, Audio] = {}
+
+    @staticmethod
+    def load_sounds():
+        for filename in os.listdir(AssetsManager.get_sound_path('')):
+            name = filename[:-4]
+            path = AssetsManager.get_sound_path(name)
+            AssetsManager.__sounds[name] = Audio(path, autoplay=False)
+
+    @staticmethod
+    def get_sound(name) -> Audio:
+        return AssetsManager.__sounds[name]
+
+    # animations
+    @staticmethod
+    def random_background_sound():
+        pass
+
+    # music
+
+    __music: dict[str, Audio] = {}
+    __music_duration = 0
+
+    @staticmethod
+    def load_music():
+
+        for filename in os.listdir(AssetsManager.get_music_path('')):
+            name = filename[:-4]
+            path = AssetsManager.get_music_path(name)
+            music = Audio(path, autoplay=False)
+            AssetsManager.__music[name] = music
+            AssetsManager.__music_duration += music.length
+
+    @staticmethod
+    def get_music(name) -> Audio:
+        return AssetsManager.__music[name]
+
+    @staticmethod
+    def once_music_queue():
+
+        # # genshin
+        # twilight_serenity = AssetsManager.get_music('Twilight Serenity')
+        # journey_of_hope = AssetsManager.get_music('Journey of Hope')
+        # genshin_impact_main_theme = AssetsManager.get_music('Genshin Impact Main Theme')
+        # rapid_as_wildfires = AssetsManager.get_music('Rapid as Wildfires')
+        # gallant_challenge = AssetsManager.get_music('Gallant Challenge')
+        #
+        # # minecraft
+        # minecraft = AssetsManager.get_music('Minecraft')
+        # clark = AssetsManager.get_music('Clark')
+
+        # generate random sequence
+        sequence = Sequence()
+
+        music_keys = list(AssetsManager.__music.keys())
+        random.shuffle(music_keys)
+        print(music_keys)
+
+        for n in range(0, len(music_keys)):
+            music = AssetsManager.__music[music_keys[n]]
+            sequence.append(Func(music.play))
+            sequence.append(math.ceil(music.length))
+
+        # sequence = Sequence(Func(twilight_serenity.play))
+        # sequence.append(math.ceil(twilight_serenity.length))
+        #
+        # sequence.append(Func(journey_of_hope.play))
+        # sequence.append(math.ceil(journey_of_hope.length))
+        #
+        # sequence.append(Func(clark.play))
+        # sequence.append(math.ceil(clark.length))
+
+        sequence.start()
+        return sequence
+
+    @staticmethod
+    def start_music_queue():
+        AssetsManager.once_music_queue()
+        sequence = Sequence(
+            Func(AssetsManager.once_music_queue),
+            duration=AssetsManager.__music_duration,
+            loop=True
+        )
+        sequence.start()
+        return sequence
+
 
 def shortcut_log_texture(name):
     return AssetsManager.block_texture_32x16(
@@ -71,9 +170,16 @@ def shortcut_log_texture(name):
 # JSON
 class Assets:
     # models
-    dropping = AssetsManager.get_model('dropping')
-    isotropic = AssetsManager.get_model('isotropic')
-    block = AssetsManager.get_model('block')
+    dropping = AssetsManager.get_model_path('dropping')
+    isotropic = AssetsManager.get_model_path('isotropic')
+    block = AssetsManager.get_model_path('block')
+    log = AssetsManager.get_model_path('log')
+    slab = AssetsManager.get_model_path('slab')
+
+    # mob animation model
+    pig = load_model("models/mob/pig/pig.gltf")
+
+    # torch = AssetsManager.get_model('torch/torch')
 
     # item texture
     empty = Texture(Image.new('RGBA', (16, 16), color=(0, 0, 0, 0)))

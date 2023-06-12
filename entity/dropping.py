@@ -10,7 +10,7 @@ class Dropping(Entity):
 
     def __init__(self, **kwargs):
         super().__init__(
-            model=AssetsManager.get_model('dropping'),
+            model=AssetsManager.get_model_path('dropping'),
             texture=AssetsManager.get_items_path('bow_standby'),
         )
 

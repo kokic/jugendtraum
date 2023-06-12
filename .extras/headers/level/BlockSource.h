@@ -30,7 +30,6 @@ class Dimension;
 class BlockSourceListener;
 class Biome;
 class Entity;
-class ICBlockEntity;
 
 class BlockSource
 {

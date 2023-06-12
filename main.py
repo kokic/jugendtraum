@@ -1,8 +1,12 @@
-from ursina import Ursina, held_keys, mouse, Vec3, camera, scene, window, color, InputField
+from direct.actor.Actor import Actor
+from ursina import Ursina, held_keys, mouse, Vec3, camera, scene, window, color, InputField, Audio, Entity, destroy, \
+    Sequence, Func, curve, load_model
 
+from assets import AssetsManager, Assets
+from block.block import place_prototype_block
 from block.block_importer import init_blocks
 from etale.client import client
-from item.item_importer import init_items
+from item.item_importer import init_items, shortcut_block
 from level.level import Level
 
 app = Ursina(development_mode=True)
@@ -12,6 +16,11 @@ window.color = color.rgba(0.67, 0.82, 1, 1)
 
 init_blocks()
 init_items()
+
+AssetsManager.load_sounds()
+AssetsManager.load_music()
+
+AssetsManager.start_music_queue()
 
 #
 generate_grass_ground = True
@@ -27,6 +36,54 @@ Level.set_block('dirt', (-2, 2, 2))
 Level.set_block('endframe', (-1, 2, 2))
 Level.set_block('enchanting_table', (0, 2, 2))
 Level.set_block('fence_door', (1, 2, 2))
+
+
+class EmbedEntity(Entity):
+
+    def __init__(self, model, position):
+        super().__init__(model=model, position=position)
+
+    def on_click(self):
+        destroy(self)
+
+
+half_duration = 2
+offset = (0, 1, 0)
+
+
+class Paimon(EmbedEntity):
+
+    def __init__(self, model, position):
+        super().__init__(model, position + (0, 1, 0))
+
+        self.lift_animate()
+        sequence = Sequence(Func(self.lift_animate), duration=half_duration * 2, loop=True)
+        sequence.start()
+
+    def lift_animate(self):
+        pos = self.position + offset
+        seq = self.animate_position(
+            value=pos,
+            duration=half_duration,
+            curve=curve.in_out_quad,
+        )[0]
+
+        seq.append(Func(lambda: self.animate_position(
+            value=pos - offset,
+            duration=half_duration,
+            curve=curve.in_out_quad
+        )))
+
+
+# kuki = embed_model('mods/genshin/models/kuki', Vec3(-2, 2, 4))
+# kuki.scale = 0.15
+
+paimon = Paimon('mods/genshin/models/paimon', Vec3(0, 2, 4))
+paimon.scale = 0.2
+
+# babara = embed_model('mods/genshin/models/babara', Vec3(2, 2, 4))
+# babara.scale = 0.15
+
 
 #
 # from PIL import Image
@@ -66,7 +123,7 @@ if show_woolen_code:
         x = index % 21
         y = 21 - index // 21
         identifier = 'wool_colored_black' if value == 0 else 'wool_colored_white'
-        Level.set_block(identifier, (x, y, 5))
+        Level.set_block(identifier, (x - 10, y, 15))
 
 client.load()
 

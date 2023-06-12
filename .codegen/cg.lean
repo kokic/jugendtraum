@@ -67,7 +67,7 @@ def registerItem (s : String) :=
 
 
 def writeRegisterItemsToFile := λ () ↦  
-  isotropicBlocks >>= λ xs ↦ xs 
+  items >>= λ xs ↦ xs 
     |>.map registerItem |>.foldl String.append ""
     |> writeFile "./.codegen/register_item.txt"
     |> pure
